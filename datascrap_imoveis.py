@@ -6,17 +6,19 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-from re import search
-from time import sleep
+import re
+from html import unescape
+from urllib.parse import unquote
 
 class Extrator_de_Dados():
 
     def __init__(self):
         self.driver = False
-        self.headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+
 
     def identifica_anunciante_do_url(self, url:str) -> str:
-        return search("www.(.*?).com", url).group(1)
+        return re.search("www.(.*?).com", url).group(1)
+
 
     def extrair_urls_desta_pesquisa(self, url_da_pesquisa:str) -> list:
         """
@@ -24,13 +26,18 @@ class Extrator_de_Dados():
         Retorna uma lista de URL dos imóveis encontrados.
         Retorna vazio caso nao encontrar
         """
+        if not isinstance(url_da_pesquisa, str):
+            raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
+
         lista_de_links = []
         html_response = requests.get(url_da_pesquisa, headers=self.headers).text
         imobiliaria = self.identifica_anunciante_do_url(url_da_pesquisa)
+       
         match imobiliaria:
-
             case "chavesnamao":
+                # Os links dos imoveis do CHAVESNAMAO são armazenados no <script> do código HTML no formato JSON
                 SEPARADOR_DOS_LINKS_NO_HTML = '<script type="application/ld+json">'
+                
                 html_separados:list = html_response.split(SEPARADOR_DOS_LINKS_NO_HTML)
                 html_separados.pop(0)
                 
@@ -45,9 +52,48 @@ class Extrator_de_Dados():
                     if "object" in especific_url:
                         especific_url = especific_url["object"]["url"]
                         lista_de_links.append(especific_url)
+            case "quintoandar":
+                LINK_COMECO = 'data-testid="house-card-container-rent"><a href="'
+                LINK_FIM = '"'
+                SITE = 'https://www.quintoandar.com.br'
+
+                html_separado_em_lista = html_response.split(LINK_COMECO)
+                html_separado_em_lista.pop(0)
+
+                for item in html_separado_em_lista:
+                    texto = re.search(f'(.*?){LINK_FIM}',item)
+                    url_final = texto.group(1)
+                    url_final = url_final.replace('&amp;','&')
+                    url_final = url_final.replace('%22;','"')
+                    url_final = SITE + url_final
+                    lista_de_links.append(url_final)
+                    
+            case "olx":
+                LINK_COMECO = 'data-testid="house-card-container-rent"><a href="'
+                LINK_FIM = '"'
+                SITE = 'https://www.olx.com.br'
+
+                html_separado_em_lista = html_response.split(LINK_COMECO)
+                html_separado_em_lista.pop(0)
+
+                for item in html_separado_em_lista:
+                    texto = re.search(f'(.*?){LINK_FIM}',item)
+                    url_final = texto.group(1)
+                    url_final = unescape(url_final)
+                    url_final = unquote(url_final)
+                    url_final = SITE + url_final
+                    lista_de_links.append(url_final)
+
+            case _:
+                raise ImobiliariaNaoCadastrada(imobiliaria)
+
         return lista_de_links
 
+
     def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str) -> dict:
+        if not isinstance(url_do_imovel, str):
+            raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_do_imovel).__name__}: {url_do_imovel}")
+
         if not self.driver:
             chrome_options = Options()
             chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
@@ -86,6 +132,8 @@ class Extrator_de_Dados():
                 "ESPACO_PRIVATIVO": "/html/body/main/article/section[2]/div/div[2]/span[1]/ul",
                 "AREA_COMUM": "/html/body/main/article/section[2]/div/div[2]/span[2]/ul"
                 }
+            case _:
+                raise ImobiliariaNaoCadastrada(imobiliaria)
 
         for nome, xpath in XP_PATHS.items():
             try:
@@ -100,4 +148,9 @@ class Extrator_de_Dados():
     
     def exit(self):
         self.driver.quit()  # Fechar o navegador
-            
+
+
+
+class ImobiliariaNaoCadastrada(Exception):
+    def __init__(self, imobiliaria):
+        super().__init__(f"Valor inválido: este webscrapt não tem a imobiliaria {imobiliaria} mapeada")
