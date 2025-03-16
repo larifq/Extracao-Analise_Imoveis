@@ -29,17 +29,16 @@ class Extrator_de_Dados():
         if not isinstance(url_da_pesquisa, str):
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
 
-        lista_de_links = []
-        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-        html_response = requests.get(url_da_pesquisa, headers).text
+        html_da_pagina = testa_e_retorna_responseText(url_da_pesquisa)
         imobiliaria = self.identifica_anunciante_do_url(url_da_pesquisa)
-       
+        lista_de_links = []
+
         match imobiliaria:
             case "chavesnamao":
                 # Os links dos imoveis do CHAVESNAMAO são armazenados no <script> do código HTML no formato JSON
                 SEPARADOR_DOS_LINKS_NO_HTML = '<script type="application/ld+json">'
                 
-                html_separados:list = html_response.split(SEPARADOR_DOS_LINKS_NO_HTML)
+                html_separados:list = html_da_pagina.split(SEPARADOR_DOS_LINKS_NO_HTML)
                 html_separados.pop(0)
                 
                 for item in html_separados:
@@ -58,7 +57,7 @@ class Extrator_de_Dados():
                 LINK_FIM = '"'
                 SITE = 'https://www.quintoandar.com.br'
 
-                html_separado_em_lista = html_response.split(LINK_COMECO)
+                html_separado_em_lista = html_da_pagina.split(LINK_COMECO)
                 html_separado_em_lista.pop(0)
 
                 for item in html_separado_em_lista:
@@ -74,7 +73,7 @@ class Extrator_de_Dados():
                 LINK_FIM = '"'
                 SITE = 'https://www.olx.com.br'
 
-                html_separado_em_lista = html_response.split(LINK_COMECO)
+                html_separado_em_lista = html_da_pagina.split(LINK_COMECO)
                 html_separado_em_lista.pop(0)
 
                 for item in html_separado_em_lista:
@@ -94,7 +93,7 @@ class Extrator_de_Dados():
     def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str) -> dict:
         if not isinstance(url_do_imovel, str):
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_do_imovel).__name__}: {url_do_imovel}")
-
+        testa_e_retorna_responseText(url_do_imovel)
         if not self.driver:
             chrome_options = Options()
             chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
@@ -155,3 +154,20 @@ class Extrator_de_Dados():
 class ImobiliariaNaoCadastrada(Exception):
     def __init__(self, imobiliaria):
         super().__init__(f"Valor inválido: este webscrapt não tem a imobiliaria {imobiliaria} mapeada")
+
+
+class AcessoNegado(Exception):
+    """Exceção personalizada para acessos negados"""
+    pass
+
+
+def testa_e_retorna_responseText(url:str):
+
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+    response = requests.get(url, headers)
+    
+    # Verifica se o status code indica que o acesso foi negado
+    if response.status_code in [401, 403]:
+        raise AcessoNegado(f"Acesso negado! Código {response.status_code} - {response.reason}")
+
+    return response.text
