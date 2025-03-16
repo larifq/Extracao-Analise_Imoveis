@@ -30,7 +30,8 @@ class Extrator_de_Dados():
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
 
         lista_de_links = []
-        html_response = requests.get(url_da_pesquisa, headers=self.headers).text
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+        html_response = requests.get(url_da_pesquisa, headers).text
         imobiliaria = self.identifica_anunciante_do_url(url_da_pesquisa)
        
         match imobiliaria:
