@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 from html import unescape
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 class Extrator_de_Dados():
 
@@ -17,7 +17,15 @@ class Extrator_de_Dados():
 
 
     def identifica_anunciante_do_url(self, url:str) -> str:
-        return re.search("www.(.*?).com", url).group(1)
+        netloc = urlparse(url).netloc  # "https://www.exemplo.com.br/contatos/index.html" -> "www.exemplo.com.br" 
+        partes = netloc.split('.')  # "www.exemplo.com.br" -> ['www', 'exemplo', 'com', 'br']
+        
+        if partes[0] == "www":
+            partes.pop(0) # ['exemplo', 'com', 'br']
+
+        imobiliaria = partes[0] # 'exemplo'
+        
+        return netloc, imobiliaria # 'www.exemplo.com.br' , 'exemplo'
 
 
     def extrair_urls_desta_pesquisa(self, url_da_pesquisa:str) -> list:
@@ -30,7 +38,7 @@ class Extrator_de_Dados():
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
 
         html_da_pagina = testa_e_retorna_responseText(url_da_pesquisa)
-        imobiliaria = self.identifica_anunciante_do_url(url_da_pesquisa)
+        dominio, imobiliaria = self.identifica_anunciante_do_url(url_da_pesquisa)
         lista_de_links = []
 
         match imobiliaria:
@@ -52,37 +60,21 @@ class Extrator_de_Dados():
                     if "object" in especific_url:
                         especific_url = especific_url["object"]["url"]
                         lista_de_links.append(especific_url)
+
             case "quintoandar":
-                LINK_COMECO = 'data-testid="house-card-container-rent"><a href="'
-                LINK_FIM = '"'
-                SITE = 'https://www.quintoandar.com.br'
+                PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
+                PADRAO_FIM = '"'
+                return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
-                html_separado_em_lista = html_da_pagina.split(LINK_COMECO)
-                html_separado_em_lista.pop(0)
-
-                for item in html_separado_em_lista:
-                    texto = re.search(f'(.*?){LINK_FIM}',item)
-                    url_final = texto.group(1)
-                    url_final = url_final.replace('&amp;','&')
-                    url_final = url_final.replace('%22;','"')
-                    url_final = SITE + url_final
-                    lista_de_links.append(url_final)
-                    
             case "olx":
-                LINK_COMECO = 'data-testid="house-card-container-rent"><a href="'
-                LINK_FIM = '"'
-                SITE = 'https://www.olx.com.br'
+                PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
+                PADRAO_FIM = '"'
+                return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
-                html_separado_em_lista = html_da_pagina.split(LINK_COMECO)
-                html_separado_em_lista.pop(0)
-
-                for item in html_separado_em_lista:
-                    texto = re.search(f'(.*?){LINK_FIM}',item)
-                    url_final = texto.group(1)
-                    url_final = unescape(url_final)
-                    url_final = unquote(url_final)
-                    url_final = SITE + url_final
-                    lista_de_links.append(url_final)
+            case "lopes":
+                PADRAO_INICIO = 'class="lead-button" href="'
+                PADRAO_FIM = '"'
+                return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
             case _:
                 raise ImobiliariaNaoCadastrada(imobiliaria)
@@ -160,14 +152,62 @@ class AcessoNegado(Exception):
     """Exceção personalizada para acessos negados"""
     pass
 
+class NotFoundError(Exception):
+    """Exceção personalizada para recursos não encontrados"""
+    pass
+
+
 
 def testa_e_retorna_responseText(url:str):
+    cookies = {
+    '_cfuvid':'OlNSZkGPxlEi4SkM0_LukFYzU_kTtCoKmE5xOEbMiho-1742075092583-0.0.1.1-604800000',
+    '_dd_s':'rum=0&expire=1742091953471',
+    '_ga':'GA1.1.441540977.1737060429',
+    '_ga_50C013M2CC':'GS1.1.1742088382.4.1.1742090428.59.0.0',
+    '_gcl_au':'1.1.150913433.1737060429',
+    '_lr_geo_location':'BR',
+    '_lr_geo_location_state':'SP',
+    '_tt_enable_cookie':'1',
+    '_ttp':'XrEF5ZtFl9rimLBNKoXrD4aO-wv.tt.2',
+    'cf_clearance':'FD6pRYizmEf8PdR7_8ikxYD2qPcwvhZtzMt7dotq99k-1742076102-1.2.1.1-dYyE3v3hs3UdSDGGvx11CgersAf1b.sciXAkh2bKtQcciKfMUhyLqWQ07ua8lt1yU45faBaRhiFEQgp5CVKv.W._GVpOl6FZCUn0XPh4XqAjMB0z2UAu5c1HMLUyoPYseE5nYzydTFkr7hxytx3sBxo0PYJMW2VTqfdBgTX1qdt8Ok_CyKPYb6NW2UNRhv6R4k7VWml43BZzwfDt6j.1grw634FSJdHKY4KteUHo4cnkvLwz6nbTkapIjj6NAu8Pk5vfKPT3kom4YFOveTwXdyY2TH9395YyFs4wOiW18eiWNOTYOUTlC5lMXmNyfhuEI86DBAL9NxYucNs_re1EZ6QcnnIezYrveB_NxL0VYIM',
+    'cto_bundle':'gWjnjF9RWE8ybFRRVXZqT1A5R3phOFhESDZYejVuc0VZTHIzYkJjSDVtQ2xnJTJGaEhnbEdQRkxOVXFjZmF5cVVZMWI0M092Mk9aMkZaTVJLWWw2V2ljZTRtZFFGdVJnSGw3RXJ6c2FxQ2xQWE92NjY0ODFqNUlOdjVXWCUyQk8lMkJCV0k3c01hV21rQ2g5V2MlMkY2VkY3QkV0cm1iRmpQdThncWplMDBGQzE3VUtkQVBhbUt2TDFwMjh5UUt4SjZCM3Y2SVJCcjk0MzBpdmdYc09jUmJsZmY5OHo2akQ0eUElM0QlM0Q',
+    'l_id':'9efbf14b-f4cb-45e6-ba45-b664ca8d24fa',
+    'mf_b837e449-83ee-457f-9ef5-8f976953f2bc':'||1742069960648||0||||0|0|49.56941',
+    'nl_id':'82969c7f-19fa-4e9b-86b1-9a6224fd1f12',
+    'nvg83482':'158cfb18ef2f85bf6d60ff264110|2_75',
+    'panoramaId':'0d5e2d548971620d36457c2f58c916d539389643ea37dad819adbc89fce7e1f4',
+    'panoramaIdType':'panoIndiv',
+    'panoramaId_expiry':'1,74267E+12',
+    'r_id':'d208f169-18e2-4fcd-86f3-f3871c55afe9',
+    's_id':'25d18b13-ef60-4e0a-8b9a-3c741f8d65422025-03-16T01:26:23.393728Z',
+    'sf_utm_medium':'organic',
+    'sf_utm_source':'google'
+    }
 
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    response = requests.get(url, headers)
-    
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Referer': 'https://www.olx.com.br'
+    }
+    response = requests.get(url, headers=headers, cookies=cookies)
+
     # Verifica se o status code indica que o acesso foi negado
     if response.status_code in [401, 403]:
         raise AcessoNegado(f"Acesso negado! Código {response.status_code} - {response.reason}")
-
     return response.text
+
+
+def retorna_lista_de_urls_separando_html(html:str, dominio:str, padrao_inicio:str, padrao_final:str='"') -> list:
+    lista_de_links = []
+    if not padrao_inicio in html:
+        raise NotFoundError(f'O argumento "padrao_inicio":"{padrao_inicio}" não foi encontrado no corpo HTML.') 
+    html_separado_em_lista = html.split(padrao_inicio)
+    html_separado_em_lista.pop(0)
+    for item in html_separado_em_lista:
+        texto = re.search(f'(.*?){padrao_final}',item)
+        url_final = texto.group(1)
+        url_final = unescape(url_final)
+        url_final = unquote(url_final)
+        url_final = 'http://' + dominio + url_final
+        lista_de_links.append(url_final)
+    return lista_de_links
+
