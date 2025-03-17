@@ -16,18 +16,6 @@ class Extrator_de_Dados():
         self.driver = False
 
 
-    def identifica_anunciante_do_url(self, url:str) -> str:
-        netloc = urlparse(url).netloc  # "https://www.exemplo.com.br/contatos/index.html" -> "www.exemplo.com.br" 
-        partes = netloc.split('.')  # "www.exemplo.com.br" -> ['www', 'exemplo', 'com', 'br']
-        
-        if partes[0] == "www":
-            partes.pop(0) # ['exemplo', 'com', 'br']
-
-        imobiliaria = partes[0] # 'exemplo'
-        
-        return netloc, imobiliaria # 'www.exemplo.com.br' , 'exemplo'
-
-
     def extrair_urls_desta_pesquisa(self, url_da_pesquisa:str) -> list:
         """
         Entra com um link da pesquisa, exemplo, URL da pesquisa realizado em São Paulo com 2 dorm com preço máximo de R$ 2.000
@@ -38,7 +26,7 @@ class Extrator_de_Dados():
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
 
         html_da_pagina = testa_e_retorna_responseText(url_da_pesquisa)
-        dominio, imobiliaria = self.identifica_anunciante_do_url(url_da_pesquisa)
+        dominio, imobiliaria = identifica_anunciante_do_url(url_da_pesquisa)
         lista_de_links = []
 
         match imobiliaria:
@@ -78,7 +66,7 @@ class Extrator_de_Dados():
                 return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
             case _:
-                raise ImobiliariaNaoCadastrada(imobiliaria)
+                raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de urls da página de pesquisa")
 
         return lista_de_links
 
@@ -86,7 +74,7 @@ class Extrator_de_Dados():
     def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str) -> dict:
         if not isinstance(url_do_imovel, str):
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_do_imovel).__name__}: {url_do_imovel}")
-        testa_e_retorna_responseText(url_do_imovel)
+        #testa_e_retorna_responseText(url_do_imovel)
         if not self.driver:
             chrome_options = Options()
             chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
@@ -94,7 +82,7 @@ class Extrator_de_Dados():
             chrome_options.add_experimental_option("useAutomationExtension", False)
             self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         self.driver.get(url_do_imovel)
-        imobiliaria = self.identifica_anunciante_do_url(url_do_imovel)
+        dominio, imobiliaria = identifica_anunciante_do_url(url_do_imovel)
         dict_dados_obtidos = {'url':url_do_imovel,
                     'imobiliaria':imobiliaria}
 
@@ -126,7 +114,8 @@ class Extrator_de_Dados():
                 "AREA_COMUM": "/html/body/main/article/section[2]/div/div[2]/span[2]/ul"
                 }
             case _:
-                raise ImobiliariaNaoCadastrada(imobiliaria)
+                raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de dados da página do imovel")
+
 
         for nome, xpath in XP_PATHS.items():
             try:
@@ -141,13 +130,13 @@ class Extrator_de_Dados():
     
     def exit(self):
         self.driver.quit()  # Fechar o navegador
+        self.driver = False
 
 
 
 class ImobiliariaNaoCadastrada(Exception):
-    def __init__(self, imobiliaria):
-        super().__init__(f"Valor inválido: este webscrapt não tem a imobiliaria {imobiliaria} mapeada")
-
+    """Exceção personalizada para valores de imobiliarias ainda não mapeadas"""
+    pass
 
 class AcessoNegado(Exception):
     """Exceção personalizada para acessos negados"""
@@ -186,3 +175,14 @@ def retorna_lista_de_urls_separando_html(html:str, dominio:str, padrao_inicio:st
         lista_de_links.append(url_final)
     return lista_de_links
 
+
+def identifica_anunciante_do_url(url:str) -> str:
+    netloc = urlparse(url).netloc  # "https://www.exemplo.com.br/contatos/index.html" -> "www.exemplo.com.br" 
+    partes = netloc.split('.')  # "www.exemplo.com.br" -> ['www', 'exemplo', 'com', 'br']
+    
+    if partes[0] == "www":
+        partes.pop(0) # ['exemplo', 'com', 'br']
+
+    imobiliaria = partes[0] # 'exemplo'
+    
+    return netloc, imobiliaria # 'www.exemplo.com.br' , 'exemplo'
