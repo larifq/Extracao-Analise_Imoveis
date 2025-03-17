@@ -63,13 +63,14 @@ class Extrator_de_Dados():
 
             case "quintoandar":
                 PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
-                PADRAO_FIM = '"'
+                PADRAO_FIM = '\?'
                 return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
             case "olx":
-                PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
-                PADRAO_FIM = '"'
-                return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
+                pass
+                #PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
+                #PADRAO_FIM = '"'
+                #return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
             case "lopes":
                 PADRAO_INICIO = 'class="lead-button" href="'
@@ -159,36 +160,10 @@ class NotFoundError(Exception):
 
 
 def testa_e_retorna_responseText(url:str):
-    cookies = {
-    '_cfuvid':'OlNSZkGPxlEi4SkM0_LukFYzU_kTtCoKmE5xOEbMiho-1742075092583-0.0.1.1-604800000',
-    '_dd_s':'rum=0&expire=1742091953471',
-    '_ga':'GA1.1.441540977.1737060429',
-    '_ga_50C013M2CC':'GS1.1.1742088382.4.1.1742090428.59.0.0',
-    '_gcl_au':'1.1.150913433.1737060429',
-    '_lr_geo_location':'BR',
-    '_lr_geo_location_state':'SP',
-    '_tt_enable_cookie':'1',
-    '_ttp':'XrEF5ZtFl9rimLBNKoXrD4aO-wv.tt.2',
-    'cf_clearance':'FD6pRYizmEf8PdR7_8ikxYD2qPcwvhZtzMt7dotq99k-1742076102-1.2.1.1-dYyE3v3hs3UdSDGGvx11CgersAf1b.sciXAkh2bKtQcciKfMUhyLqWQ07ua8lt1yU45faBaRhiFEQgp5CVKv.W._GVpOl6FZCUn0XPh4XqAjMB0z2UAu5c1HMLUyoPYseE5nYzydTFkr7hxytx3sBxo0PYJMW2VTqfdBgTX1qdt8Ok_CyKPYb6NW2UNRhv6R4k7VWml43BZzwfDt6j.1grw634FSJdHKY4KteUHo4cnkvLwz6nbTkapIjj6NAu8Pk5vfKPT3kom4YFOveTwXdyY2TH9395YyFs4wOiW18eiWNOTYOUTlC5lMXmNyfhuEI86DBAL9NxYucNs_re1EZ6QcnnIezYrveB_NxL0VYIM',
-    'cto_bundle':'gWjnjF9RWE8ybFRRVXZqT1A5R3phOFhESDZYejVuc0VZTHIzYkJjSDVtQ2xnJTJGaEhnbEdQRkxOVXFjZmF5cVVZMWI0M092Mk9aMkZaTVJLWWw2V2ljZTRtZFFGdVJnSGw3RXJ6c2FxQ2xQWE92NjY0ODFqNUlOdjVXWCUyQk8lMkJCV0k3c01hV21rQ2g5V2MlMkY2VkY3QkV0cm1iRmpQdThncWplMDBGQzE3VUtkQVBhbUt2TDFwMjh5UUt4SjZCM3Y2SVJCcjk0MzBpdmdYc09jUmJsZmY5OHo2akQ0eUElM0QlM0Q',
-    'l_id':'9efbf14b-f4cb-45e6-ba45-b664ca8d24fa',
-    'mf_b837e449-83ee-457f-9ef5-8f976953f2bc':'||1742069960648||0||||0|0|49.56941',
-    'nl_id':'82969c7f-19fa-4e9b-86b1-9a6224fd1f12',
-    'nvg83482':'158cfb18ef2f85bf6d60ff264110|2_75',
-    'panoramaId':'0d5e2d548971620d36457c2f58c916d539389643ea37dad819adbc89fce7e1f4',
-    'panoramaIdType':'panoIndiv',
-    'panoramaId_expiry':'1,74267E+12',
-    'r_id':'d208f169-18e2-4fcd-86f3-f3871c55afe9',
-    's_id':'25d18b13-ef60-4e0a-8b9a-3c741f8d65422025-03-16T01:26:23.393728Z',
-    'sf_utm_medium':'organic',
-    'sf_utm_source':'google'
-    }
-
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Referer': 'https://www.olx.com.br'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
-    response = requests.get(url, headers=headers, cookies=cookies)
+    response = requests.get(url, headers=headers)
 
     # Verifica se o status code indica que o acesso foi negado
     if response.status_code in [401, 403]:
@@ -207,7 +182,7 @@ def retorna_lista_de_urls_separando_html(html:str, dominio:str, padrao_inicio:st
         url_final = texto.group(1)
         url_final = unescape(url_final)
         url_final = unquote(url_final)
-        url_final = 'http://' + dominio + url_final
+        url_final = 'https://' + dominio + url_final
         lista_de_links.append(url_final)
     return lista_de_links
 
