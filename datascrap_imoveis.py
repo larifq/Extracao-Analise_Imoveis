@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from datetime import datetime
 import re
 import os
 import csv
@@ -16,8 +17,12 @@ class Extrator_de_Dados():
 
     def __init__(self):
         self.driver = False
+        self.now = datetime.now()
         self.dados_extraidos = {}
 
+    def carrega_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/"):
+        for file in os.listdir(dir):
+            pass
 
     def retorna_elemento_da_pagina(self, xpath:str) -> object:
         return self.driver.find_element(By.XPATH, xpath)
@@ -106,7 +111,8 @@ class Extrator_de_Dados():
 
         dict_dados_obtidos = {
             'url':url_do_imovel,
-            'imobiliaria':imobiliaria
+            'imobiliaria':imobiliaria,
+            'data_extracao':self.now
             }
 
         match imobiliaria:
@@ -196,7 +202,8 @@ class Extrator_de_Dados():
     def salvar_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/"):
         for imobiliaria, dados_imoveis in self.dados_extraidos.items():
             os.makedirs(dir, exist_ok=True)
-            path = os.path.join(dir, f"{imobiliaria}.csv")
+            date_time = self.now.strftime("%Y%m%d%H%M%S")
+            path = os.path.join(dir, f"{date_time}-{imobiliaria}.csv")
             adicionar_cabecalho = not os.path.exists(path)
             with open(path, "a", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=dados_imoveis[0].keys(), quoting=csv.QUOTE_ALL)
@@ -258,8 +265,8 @@ def identifica_anunciante_do_url(url:str) -> str:
     partes = netloc.split('.')  # "www.exemplo.com.br" -> ['www', 'exemplo', 'com', 'br']
     
     if partes[0] == "www":
-        partes.pop(0) # ['exemplo', 'com', 'br']
+        partes.pop(0) # ['www', 'exemplo', 'com', 'br'] -> ['exemplo', 'com', 'br']
 
-    imobiliaria = partes[0] # 'exemplo'
+    imobiliaria = partes[0] # ['exemplo', 'com', 'br'] -> 'exemplo'
     
     return netloc, imobiliaria # 'www.exemplo.com.br' , 'exemplo'
