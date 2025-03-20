@@ -7,6 +7,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import re
+import os
+import csv
 from html import unescape
 from urllib.parse import unquote, urlparse
 
@@ -14,6 +16,7 @@ class Extrator_de_Dados():
 
     def __init__(self):
         self.driver = False
+        self.dados_extraidos = {}
 
 
     def retorna_elemento_da_pagina(self, xpath:str) -> object:
@@ -178,11 +181,21 @@ class Extrator_de_Dados():
                 valor = elemento.text.strip()
                 dict_dados_obtidos[nome] = valor
             except:
-                print(f'Elemento XPATH não localizado no URL fornecido: {nome}')
+                dict_dados_obtidos[nome] = "N/A"
+                print(f'Aviso: Elemento XPATH não localizado no URL fornecido: {nome}')
 
         return dict_dados_obtidos
     
-    
+    def salvar_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/"):
+        for imobiliaria, dados_imoveis in self.dados_extraidos.items:
+            os.makedirs(dir, exist_ok=True)
+            path = os.path.join(dir, f"{imobiliaria}.csv")
+            with open(path, "a", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=dados_imoveis[0].keys(), quoting=csv.QUOTE_ALL)
+                writer.writeheader()
+                writer.writerows(dados_imoveis)
+        return
+
     def exit(self):
         self.driver.quit()  # Fechar o navegador
         self.driver = False
