@@ -89,7 +89,11 @@ class Extrator_de_Dados():
 
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de urls da página de pesquisa")
-        self.urls_extraidas[url_da_pesquisa].append(lista_de_links)
+        hoje = self.now.strftime("%Y-%m-%d")
+        if not hoje in self.urls_extraidas:
+            self.urls_extraidas[hoje]=[]
+
+        self.urls_extraidas[hoje].extend(lista_de_links)
         return lista_de_links
 
 
@@ -202,29 +206,30 @@ class Extrator_de_Dados():
     
     def salvar_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/", clear_cache=True):
         os.makedirs(dir, exist_ok=True)
-        date_time = self.now.strftime("%Y%m%d%H%M%S")
-        adicionar_cabecalho = not os.path.exists(path)
-        for url_pesquisa, lista_urls in self.urls_extraidas.items():
-            path = os.path.join(dir, f"{url_pesquisa}.txt")
-            with open(path, "a", newline="", encoding="utf-8") as f:
-                writer = csv.DictWriter(f, fieldnames=lista_urls[0].keys(), quoting=csv.QUOTE_ALL)
-                if adicionar_cabecalho:
-                    writer.writeheader()
-                writer.writerows(lista_urls)
+        self.now = datetime.now()
 
-            with open("path", "a", encoding="utf-8") as f:
-                header = ""
+        for data, lista_urls in self.urls_extraidas.items():
+            path = os.path.join(dir, f'{data}.txt')
+            adicionar_cabecalho = not os.path.exists(path)
+            with open(path, "a", encoding="utf-8", newline="") as f:
+                writer = csv.writer(f)
                 if adicionar_cabecalho:
-                    header = f'{self.now} - {url_pesquisa}\n'
-                f.write(header.join(lista_urls) + "\n")
+                    writer.writerow(["DATA", "URL"])
+                for url in lista_urls:
+                    writer.writerow([data, url])
 
         for imobiliaria, dados_imoveis in self.dados_extraidos.items():
             path = os.path.join(dir, f"{imobiliaria}.csv")
+            adicionar_cabecalho = not os.path.exists(path)
             with open(path, "a", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=dados_imoveis[0].keys(), quoting=csv.QUOTE_ALL)
                 if adicionar_cabecalho:
                     writer.writeheader()
                 writer.writerows(dados_imoveis)
+
+        if clear_cache:
+            self.urls_extraidas = {}
+            self.dados_extraidos = {}
         return
 
     def exit(self):

@@ -7,7 +7,7 @@ programa_do_erick = Extrator_de_Dados()
 lista_de_urls = programa_do_erick.extrair_urls_desta_pesquisa(URL)
 print(lista_de_urls)
 
-um_url_de_imovel = lista_de_urls[2]
+um_url_de_imovel = lista_de_urls[6]
 dic_info_imovel = programa_do_erick.extrair_dados_imobiliarios_desta_url(um_url_de_imovel)
 print(dic_info_imovel)
 
