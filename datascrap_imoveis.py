@@ -87,10 +87,14 @@ class Extrator_de_Dados():
         return lista_de_links
 
 
-    def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str) -> dict:
+    def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str, acessar_pagina_repetida=False) -> dict:
         if not isinstance(url_do_imovel, str):
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_do_imovel).__name__}: {url_do_imovel}")
         #testa_e_retorna_responseText(url_do_imovel)
+        dominio, imobiliaria = identifica_anunciante_do_url(url_do_imovel)
+        if acessar_pagina_repetida and url_do_imovel in self.dados_extraidos[imobiliaria]:
+            print(url_do_imovel + "já foi extraído anteriormente")
+            return
         if not self.driver:
             chrome_options = Options()
             chrome_options.add_argument("--start-maximized")
@@ -99,9 +103,11 @@ class Extrator_de_Dados():
             chrome_options.add_experimental_option("useAutomationExtension", False)
             self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         self.driver.get(url_do_imovel)
-        dominio, imobiliaria = identifica_anunciante_do_url(url_do_imovel)
-        dict_dados_obtidos = {'url':url_do_imovel,
-                    'imobiliaria':imobiliaria}
+
+        dict_dados_obtidos = {
+            'url':url_do_imovel,
+            'imobiliaria':imobiliaria
+            }
 
         match imobiliaria:
             case "chavesnamao":
@@ -170,7 +176,6 @@ class Extrator_de_Dados():
                     "DESCRICAO": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/div",
                     "INSTALACOES_COND": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-feature-grid/main",
                     "CODIGO_IMOVEL": "/html/body/app-root/lps-product/main/div[1]/div[2]/lps-product-lead/main/div[2]/div"
-
                 }
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de dados da página do imovel")
@@ -183,16 +188,20 @@ class Extrator_de_Dados():
             except:
                 dict_dados_obtidos[nome] = "N/A"
                 print(f'Aviso: Elemento XPATH não localizado no URL fornecido: {nome}')
-
+        if not imobiliaria in self.dados_extraidos:
+            self.dados_extraidos[imobiliaria]=[]
+        self.dados_extraidos[imobiliaria].append(dict_dados_obtidos)
         return dict_dados_obtidos
     
     def salvar_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/"):
-        for imobiliaria, dados_imoveis in self.dados_extraidos.items:
+        for imobiliaria, dados_imoveis in self.dados_extraidos.items():
             os.makedirs(dir, exist_ok=True)
             path = os.path.join(dir, f"{imobiliaria}.csv")
+            adicionar_cabecalho = not os.path.exists(path)
             with open(path, "a", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=dados_imoveis[0].keys(), quoting=csv.QUOTE_ALL)
-                writer.writeheader()
+                if adicionar_cabecalho:
+                    writer.writeheader()
                 writer.writerows(dados_imoveis)
         return
 
