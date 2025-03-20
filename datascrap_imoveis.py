@@ -102,8 +102,8 @@ class Extrator_de_Dados():
 
         match imobiliaria:
             case "chavesnamao":
-                XP_BOTAO_EXPANDIR_DESCRICAO = "/html/body/main/article/section[2]/div/div[1]/div/span/svg"
-                self.se_houver_elemento_clicar_nele(XP_BOTAO_EXPANDIR_DESCRICAO)
+                #XP_BOTAO_EXPANDIR_DESCRICAO = "/html/body/main/article/section[2]/div/div[1]/div/span/svg"
+                #self.se_houver_elemento_clicar_nele(XP_BOTAO_EXPANDIR_DESCRICAO)
                 XP_PATHS = {
                     "ALUGUEL": "/html/body/main/article/section[2]/div/table/tbody/tr[1]/td[1]/p[2]/b",
                     "CONDOMINIO": "/html/body/main/article/section[2]/div/table/tbody/tr[2]/td[2]/p",
@@ -152,9 +152,25 @@ class Extrator_de_Dados():
                     "COND_ITENS_INDISPONIVEIS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/p[2]",
                     "COMPRA": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[4]/div/section/div/p[2]",
                 }
+            case "lopes":
+                XP_VER_MAIS = "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/lps-ui-button/button"
+                self.se_houver_elemento_clicar_nele(XP_VER_MAIS)
+                XP_PATHS = {
+                    "TITULO": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[1]/div/h1",
+                    "TOTAL": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/p[2]",
+                    "ALUGUEL": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/div/lps-product-price-complementary/p",
+                    "AREA_TOTAL": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[1]/div/p[2]",
+                    "AREA_CONSTRUIDA": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[2]/div/p[2]",
+                    "QUARTOS": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[3]/div/p[2]",
+                    "BANHEIROS": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[4]/div/p[2]",
+                    "ANDAR": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[5]/div/p[2]",
+                    "DESCRICAO": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/div",
+                    "INSTALACOES_COND": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-feature-grid/main",
+                    "CODIGO_IMOVEL": "/html/body/app-root/lps-product/main/div[1]/div[2]/lps-product-lead/main/div[2]/div"
+
+                }
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de dados da página do imovel")
-
 
         for nome, xpath in XP_PATHS.items():
             try:
