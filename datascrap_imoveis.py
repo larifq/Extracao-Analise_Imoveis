@@ -131,12 +131,12 @@ class Extrator_de_Dados():
                     "ALUGUEL_CONDOMINIO": "/html/body/main/article/section[2]/div/table/tbody/tr[4]/td[2]/p",
                     "ENDERECO": "/html/body/main/article/section[2]/div/address/span/h2/b",
                     "TITULO": "/html/body/main/article/section[2]/div/span/h1",
-                    "AREA": "/html/body/main/article/section[2]/div/ul/li[1]/p/b",
-                    #"AREA_UTIL_TOTAL": "/html/body/main/article/section[2]/div/ul/li[1]/p/b", # idem ao de cima
-                    "QUARTOS": "/html/body/main/article/section[2]/div/ul/li[2]/p/b",
-                    "SUITES": "/html/body/main/article/section[2]/div/ul/li[3]/p/b",
-                    "GARAGENS": "/html/body/main/article/section[2]/div/ul/li[3]/p/b",
-                    "BANHEIROS": "/html/body/main/article/section[2]/div/ul/li[4]/p/b",
+                    "INFO_1": "/html/body/main/article/section[2]/div/ul/li[1]/p/b",
+                    "INFO_2": "/html/body/main/article/section[2]/div/ul/li[2]/p/b",
+                    "INFO_3": "/html/body/main/article/section[2]/div/ul/li[3]/p/b",
+                    "INFO_4": "/html/body/main/article/section[2]/div/ul/li[4]/p/b",
+                    "INFO_5": "/html/body/main/article/section[2]/div/ul/li[5]/p/b",
+                    "INFO_6": "/html/body/main/article/section[2]/div/ul/li[6]/p/b",
                     "ATUALIZACAO_REF": "/html/body/main/article/section[2]/div/div[1]/div/p[1]",
                     "DESCRICAO": "/html/body/main/article/section[2]/div/div[1]/div/p[2]",
                     "ANUNCIANTE": "/html/body/main/article/section[2]/aside/div[2]/span/span[2]/a/span/h2/b",
@@ -211,7 +211,7 @@ class Extrator_de_Dados():
         for data, lista_urls in self.urls_extraidas.items():
             path = os.path.join(dir, f'{data}.txt')
             adicionar_cabecalho = not os.path.exists(path)
-            with open(path, "a", encoding="utf-8", newline="") as f:
+            with open(path, "a", encoding="utf-8-sig", newline="") as f:
                 writer = csv.writer(f)
                 if adicionar_cabecalho:
                     writer.writerow(["DATA", "URL"])
@@ -221,7 +221,7 @@ class Extrator_de_Dados():
         for imobiliaria, dados_imoveis in self.dados_extraidos.items():
             path = os.path.join(dir, f"{imobiliaria}.csv")
             adicionar_cabecalho = not os.path.exists(path)
-            with open(path, "a", newline="", encoding="utf-8") as f:
+            with open(path, "a", newline="", encoding="utf-8-sig") as f:
                 writer = csv.DictWriter(f, fieldnames=dados_imoveis[0].keys(), quoting=csv.QUOTE_ALL)
                 if adicionar_cabecalho:
                     writer.writeheader()
