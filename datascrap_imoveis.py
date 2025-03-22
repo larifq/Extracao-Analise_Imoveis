@@ -46,7 +46,7 @@ class Extrator_de_Dados():
         Retorna uma lista de URL dos imóveis encontrados.
         Retorna vazio caso nao encontrar
         """
-        
+
         # Valida se o argumento da URL é uma string
         if not isinstance(url_da_pesquisa, str):
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
@@ -135,12 +135,12 @@ class Extrator_de_Dados():
                     "ALUGUEL_COND": "/html/body/main/article/section[2]/div/table/tbody/tr[4]/td[2]/p",
                     "ENDERECO":     "/html/body/main/article/section[2]/div/address/span/h2/b",
                     "TITULO":       "/html/body/main/article/section[2]/div/span/h1",
-                    "INFO_1":       "/html/body/main/article/section[2]/div/ul/li[1]/p/b",
-                    "INFO_2":       "/html/body/main/article/section[2]/div/ul/li[2]/p/b",
-                    "INFO_3":       "/html/body/main/article/section[2]/div/ul/li[3]/p/b",
-                    "INFO_4":       "/html/body/main/article/section[2]/div/ul/li[4]/p/b",
-                    "INFO_5":       "/html/body/main/article/section[2]/div/ul/li[5]/p/b",
-                    "INFO_6":       "/html/body/main/article/section[2]/div/ul/li[6]/p/b",
+                    "INFO_1":       "/html/body/main/article/section[2]/div/ul/li[1]/p",
+                    "INFO_2":       "/html/body/main/article/section[2]/div/ul/li[2]/p",
+                    "INFO_3":       "/html/body/main/article/section[2]/div/ul/li[3]/p",
+                    "INFO_4":       "/html/body/main/article/section[2]/div/ul/li[4]/p",
+                    "INFO_5":       "/html/body/main/article/section[2]/div/ul/li[5]/p",
+                    "INFO_6":       "/html/body/main/article/section[2]/div/ul/li[6]/p",
                     "ATUALIZACAO":  "/html/body/main/article/section[2]/div/div[1]/div/p[1]",
                     "DESCRICAO":    "/html/body/main/article/section[2]/div/div[1]/div/p[2]",
                     "ANUNCIANTE":   "/html/body/main/article/section[2]/aside/div[2]/span/span[2]/a/span/h2/b",
