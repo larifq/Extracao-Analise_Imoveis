@@ -76,8 +76,7 @@ class Extrator_de_Dados():
                 PADRAO_FIM = '\?'
                 return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
-            case "olx":
-                pass
+            #case "olx":
                 #PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
                 #PADRAO_FIM = '"'
                 #return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
@@ -125,68 +124,68 @@ class Extrator_de_Dados():
                 #XP_BOTAO_EXPANDIR_DESCRICAO = "/html/body/main/article/section[2]/div/div[1]/div/span/svg"
                 #self.se_houver_elemento_clicar_nele(XP_BOTAO_EXPANDIR_DESCRICAO)
                 XP_PATHS = {
-                    "ALUGUEL": "/html/body/main/article/section[2]/div/table/tbody/tr[1]/td[1]/p[2]/b",
-                    "CONDOMINIO": "/html/body/main/article/section[2]/div/table/tbody/tr[2]/td[2]/p",
-                    "IPTU": "/html/body/main/article/section[2]/div/table/tbody/tr[3]/td[2]/p",
-                    "ALUGUEL_CONDOMINIO": "/html/body/main/article/section[2]/div/table/tbody/tr[4]/td[2]/p",
-                    "ENDERECO": "/html/body/main/article/section[2]/div/address/span/h2/b",
-                    "TITULO": "/html/body/main/article/section[2]/div/span/h1",
-                    "INFO_1": "/html/body/main/article/section[2]/div/ul/li[1]/p/b",
-                    "INFO_2": "/html/body/main/article/section[2]/div/ul/li[2]/p/b",
-                    "INFO_3": "/html/body/main/article/section[2]/div/ul/li[3]/p/b",
-                    "INFO_4": "/html/body/main/article/section[2]/div/ul/li[4]/p/b",
-                    "INFO_5": "/html/body/main/article/section[2]/div/ul/li[5]/p/b",
-                    "INFO_6": "/html/body/main/article/section[2]/div/ul/li[6]/p/b",
-                    "ATUALIZACAO_REF": "/html/body/main/article/section[2]/div/div[1]/div/p[1]",
-                    "DESCRICAO": "/html/body/main/article/section[2]/div/div[1]/div/p[2]",
-                    "ANUNCIANTE": "/html/body/main/article/section[2]/aside/div[2]/span/span[2]/a/span/h2/b",
-                    "ESPACO_PRIVATIVO": "/html/body/main/article/section[2]/div/div[2]/span[1]/ul",
-                    "AREA_COMUM": "/html/body/main/article/section[2]/div/div[2]/span[2]/ul"
+                    "ALUGUEL":      "/html/body/main/article/section[2]/div/table/tbody/tr[1]/td[1]/p[2]/b",
+                    "CONDOMINIO":   "/html/body/main/article/section[2]/div/table/tbody/tr[2]/td[2]/p",
+                    "IPTU":         "/html/body/main/article/section[2]/div/table/tbody/tr[3]/td[2]/p",
+                    "ALUGUEL_COND": "/html/body/main/article/section[2]/div/table/tbody/tr[4]/td[2]/p",
+                    "ENDERECO":     "/html/body/main/article/section[2]/div/address/span/h2/b",
+                    "TITULO":       "/html/body/main/article/section[2]/div/span/h1",
+                    "INFO_1":       "/html/body/main/article/section[2]/div/ul/li[1]/p/b",
+                    "INFO_2":       "/html/body/main/article/section[2]/div/ul/li[2]/p/b",
+                    "INFO_3":       "/html/body/main/article/section[2]/div/ul/li[3]/p/b",
+                    "INFO_4":       "/html/body/main/article/section[2]/div/ul/li[4]/p/b",
+                    "INFO_5":       "/html/body/main/article/section[2]/div/ul/li[5]/p/b",
+                    "INFO_6":       "/html/body/main/article/section[2]/div/ul/li[6]/p/b",
+                    "ATUALIZACAO":  "/html/body/main/article/section[2]/div/div[1]/div/p[1]",
+                    "DESCRICAO":    "/html/body/main/article/section[2]/div/div[1]/div/p[2]",
+                    "ANUNCIANTE":   "/html/body/main/article/section[2]/aside/div[2]/span/span[2]/a/span/h2/b",
+                    "ESPACO_PRIV":  "/html/body/main/article/section[2]/div/div[2]/span[1]/ul",
+                    "AREA_COMUM":   "/html/body/main/article/section[2]/div/div[2]/span[2]/ul"
                 }
             case "quintoandar":
-                XP_MAIS_CONDOMINIO = "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[1]/div[2]/svg"
+                XP_MAIS_CONDOMINIO =    "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[1]/div[2]/svg"
                 self.se_houver_elemento_clicar_nele(XP_MAIS_CONDOMINIO) # por ora ainda nao funcionando
                 XP_PATHS = {
-                    "TITULO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[2]/div/h1",
-                    "TEMPO_PUBLICADO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[2]/div/div/small/span",
-                    "DESCRICAO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[3]/div/div/div/p[2]",
-                    "ALUGUEL": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[1]/div/div/p",
-                    "CONDOMINIO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[2]/div/div/p",
-                    "IPTU": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[3]/div/div/p",
-                    "SEGURO_INCENDIO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[4]/div/div/p",
-                    "TOTAL": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[7]/div/div/h4",
-                    "ENDERECO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[2]/div/div/div/div[1]",
-                    "AREA": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[1]/div/div/p",
-                    "QUARTOS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[2]/div/div/p",
-                    "BANHEIROS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[3]/div/div/p",
-                    "GARAGENS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[4]/div/div/p",
-                    "ANDAR": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[5]/div/div/p",
-                    "ACEITA_PET": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[6]/div/div/p",
-                    "MOBILIADO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[7]/div/div/p",
-                    "ESTACAO_PROX": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[8]/div/div/p",
-                    "ITENS_DISPONIVEIS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[1]",
-                    "ITENS_INDISPONIVEIS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[2]",
-                    "CONDOMINIO": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[1]/h2/span",
+                    "TITULO":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[2]/div/h1",
+                    "TEMPO_PUBLICADO":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[2]/div/div/small/span",
+                    "DESCRICAO":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[3]/div/div/div/p[2]",
+                    "ALUGUEL":           "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[1]/div/div/p",
+                    "CONDOMINIO":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[2]/div/div/p",
+                    "IPTU":              "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[3]/div/div/p",
+                    "SEGURO_INCENDIO":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[4]/div/div/p",
+                    "TOTAL":             "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[7]/div/div/h4",
+                    "ENDERECO":          "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[2]/div/div/div/div[1]",
+                    "AREA":              "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[1]/div/div/p",
+                    "QUARTOS":           "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[2]/div/div/p",
+                    "BANHEIROS":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[3]/div/div/p",
+                    "GARAGENS":          "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[4]/div/div/p",
+                    "ANDAR":             "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[5]/div/div/p",
+                    "ACEITA_PET":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[6]/div/div/p",
+                    "MOBILIADO":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[7]/div/div/p",
+                    "ESTACAO_PROX":      "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[8]/div/div/p",
+                    "ITENS_DISP":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[1]",
+                    "ITENS_INDISP":      "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[2]",
+                    "NOME_CONDOMINIO":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[1]/h2/span",
                     # itens de condominio, por ora, ainda nao funcionam
-                    "COND_ITENS_DISPONIVEIS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/div[1]/p[2]",
-                    "COND_ITENS_INDISPONIVEIS": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/p[2]",
-                    "COMPRA": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[4]/div/section/div/p[2]",
+                    "COND_ITENS_DISP":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/div[1]/p[2]",
+                    "COND_ITENS_INDISP": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/p[2]",
+                    "COMPRA":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[4]/div/section/div/p[2]",
                 }
             case "lopes":
-                XP_VER_MAIS = "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/lps-ui-button/button"
+                XP_VER_MAIS =     "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/lps-ui-button/button"
                 self.se_houver_elemento_clicar_nele(XP_VER_MAIS)
                 XP_PATHS = {
-                    "TITULO": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[1]/div/h1",
-                    "TOTAL": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/p[2]",
-                    "ALUGUEL": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/div/lps-product-price-complementary/p",
+                    "TITULO":     "/html/body/app-root/lps-product/main/div[1]/div[1]/div[1]/div/h1",
+                    "TOTAL":      "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/p[2]",
+                    "ALUGUEL":    "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/div/lps-product-price-complementary/p",
                     "AREA_TOTAL": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[1]/div/p[2]",
-                    "AREA_CONSTRUIDA": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[2]/div/p[2]",
-                    "QUARTOS": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[3]/div/p[2]",
-                    "BANHEIROS": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[4]/div/p[2]",
-                    "ANDAR": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[5]/div/p[2]",
-                    "DESCRICAO": "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/div",
-                    "INSTALACOES_COND": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-feature-grid/main",
-                    "CODIGO_IMOVEL": "/html/body/app-root/lps-product/main/div[1]/div[2]/lps-product-lead/main/div[2]/div"
+                    "AREA_CONST": "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[2]/div/p[2]",
+                    "QUARTOS":    "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[3]/div/p[2]",
+                    "BANHEIROS":  "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[4]/div/p[2]",
+                    "ANDAR":      "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-attributes/ul/li[5]/div/p[2]",
+                    "DESCRICAO":  "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/div",
+                    "INST_COND":  "/html/body/app-root/lps-product/main/div[1]/div[1]/lps-feature-grid/main",
+                    "COD_IMOVEL": "/html/body/app-root/lps-product/main/div[1]/div[2]/lps-product-lead/main/div[2]/div"
                 }
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de dados da página do imovel")
