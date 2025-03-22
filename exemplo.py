@@ -11,7 +11,7 @@ programa_do_erick = Extrator_de_Dados()
 lista_de_urls = programa_do_erick.extrair_urls_desta_pesquisa(URL)
 print(lista_de_urls)
 
-url_de_imovel = lista_de_urls[6]
+url_de_imovel = lista_de_urls[0]
 
 # Ao inserir a URL DE UM IMOVEL, a função abrirá o selenium e extrairá as informações e dados do imóvel
 dic_info_imovel = programa_do_erick.extrair_dados_imobiliarios_desta_url(url_de_imovel)

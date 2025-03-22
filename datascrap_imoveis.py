@@ -21,9 +21,11 @@ class Extrator_de_Dados():
         self.urls_extraidas = {}
         self.dados_extraidos = {}
 
+
     def carrega_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/"):
         for file in os.listdir(dir):
             pass
+
 
     def retorna_elemento_da_pagina(self, xpath:str) -> object:
         return self.driver.find_element(By.XPATH, xpath)
@@ -44,6 +46,8 @@ class Extrator_de_Dados():
         Retorna uma lista de URL dos imóveis encontrados.
         Retorna vazio caso nao encontrar
         """
+        
+        # Valida se o argumento da URL é uma string
         if not isinstance(url_da_pesquisa, str):
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
 
@@ -97,33 +101,34 @@ class Extrator_de_Dados():
 
 
     def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str, acessar_pagina_repetida=False) -> dict:
+        """
+        A partir da URL DO IMOVEL, a função abrirá o selenium e extrairás as informações do imóvel retornando um dicionário.
+        """
+
+        # Valida se o argumento da URL é uma string
         if not isinstance(url_do_imovel, str):
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_do_imovel).__name__}: {url_do_imovel}")
-        #testa_e_retorna_responseText(url_do_imovel)
+
         dominio, imobiliaria = identifica_anunciante_do_url(url_do_imovel)
         if acessar_pagina_repetida and url_do_imovel in self.dados_extraidos[imobiliaria]:
             print(url_do_imovel + "já foi extraído anteriormente")
             return
-        if not self.driver:
-            chrome_options = Options()
-            chrome_options.add_argument("--start-maximized")
-            chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
-            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-            chrome_options.add_experimental_option("useAutomationExtension", False)
-            self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-        self.driver.get(url_do_imovel)
 
+        # Cria dicionário inicial
         dict_dados_obtidos = {
             'url':url_do_imovel,
             'imobiliaria':imobiliaria,
             'data_extracao':self.now
             }
 
+        XPATHS_CLICAR = []
+
         match imobiliaria:
             case "chavesnamao":
-                #XP_BOTAO_EXPANDIR_DESCRICAO = "/html/body/main/article/section[2]/div/div[1]/div/span/svg"
-                #self.se_houver_elemento_clicar_nele(XP_BOTAO_EXPANDIR_DESCRICAO)
-                XP_PATHS = {
+                XPATHS_CLICAR = [
+                "/html/body/main/article/section[2]/div/div[1]/div/span/svg"
+                ]
+                XPATHS_INFO = {
                     "ALUGUEL":      "/html/body/main/article/section[2]/div/table/tbody/tr[1]/td[1]/p[2]/b",
                     "CONDOMINIO":   "/html/body/main/article/section[2]/div/table/tbody/tr[2]/td[2]/p",
                     "IPTU":         "/html/body/main/article/section[2]/div/table/tbody/tr[3]/td[2]/p",
@@ -143,9 +148,10 @@ class Extrator_de_Dados():
                     "AREA_COMUM":   "/html/body/main/article/section[2]/div/div[2]/span[2]/ul"
                 }
             case "quintoandar":
-                XP_MAIS_CONDOMINIO =    "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[1]/div[2]/svg"
-                self.se_houver_elemento_clicar_nele(XP_MAIS_CONDOMINIO) # por ora ainda nao funcionando
-                XP_PATHS = {
+                XPATHS_CLICAR = [
+                    "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[1]/div[2]/svg"
+                    ]
+                XPATHS_INFO = {
                     "TITULO":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[2]/div/h1",
                     "TEMPO_PUBLICADO":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[2]/div/div/small/span",
                     "DESCRICAO":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[3]/div/div/div/p[2]",
@@ -172,9 +178,10 @@ class Extrator_de_Dados():
                     "COMPRA":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[4]/div/section/div/p[2]",
                 }
             case "lopes":
-                XP_VER_MAIS =     "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/lps-ui-button/button"
-                self.se_houver_elemento_clicar_nele(XP_VER_MAIS)
-                XP_PATHS = {
+                XPATHS_CLICAR = [
+                    "/html/body/app-root/lps-product/main/div[1]/div[1]/div[3]/lps-expansive-text/div/lps-ui-button/button"
+                    ]
+                XPATHS_INFO = {
                     "TITULO":     "/html/body/app-root/lps-product/main/div[1]/div[1]/div[1]/div/h1",
                     "TOTAL":      "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/p[2]",
                     "ALUGUEL":    "/html/body/app-root/lps-product/main/div[1]/div[1]/div[2]/lps-product-price/main/div[1]/div/lps-product-price-complementary/p",
@@ -190,7 +197,24 @@ class Extrator_de_Dados():
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de dados da página do imovel")
 
-        for nome, xpath in XP_PATHS.items():
+        # Iniciar Selenium e acessar a url do imovel
+        if not self.driver:
+            chrome_options = Options()
+            chrome_options.add_argument("--start-maximized")
+            chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            chrome_options.add_experimental_option("useAutomationExtension", False)
+            self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+        self.driver.get(url_do_imovel)
+
+        # Se houver XPATH necessários para clicar para a visualização de dados
+        if XPATHS_CLICAR:
+            for xpath in XPATHS_CLICAR:
+                # Clica em cada um dos xpath
+                self.se_houver_elemento_clicar_nele(xpath)
+
+        # Para cada XPATH_INFO será extraído suas informações (se houver o elemento)
+        for nome, xpath in XPATHS_INFO.items():
             try:
                 elemento = self.driver.find_element(By.XPATH, xpath)
                 valor = elemento.text.strip()
@@ -198,11 +222,16 @@ class Extrator_de_Dados():
             except:
                 dict_dados_obtidos[nome] = "N/A"
                 print(f'Aviso: Elemento XPATH não localizado no URL fornecido: {nome}')
+
+        # Salva os dados obtidos em atributo do objeto
         if not imobiliaria in self.dados_extraidos:
             self.dados_extraidos[imobiliaria]=[]
         self.dados_extraidos[imobiliaria].append(dict_dados_obtidos)
+
+        # retorna os dados obtidos
         return dict_dados_obtidos
     
+
     def salvar_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/", clear_cache=True):
         os.makedirs(dir, exist_ok=True)
         self.now = datetime.now()
@@ -231,6 +260,7 @@ class Extrator_de_Dados():
             self.dados_extraidos = {}
         return
 
+
     def exit(self):
         self.driver.quit()  # Fechar o navegador
         self.driver = False
@@ -241,9 +271,11 @@ class ImobiliariaNaoCadastrada(Exception):
     """Exceção personalizada para valores de imobiliarias ainda não mapeadas"""
     pass
 
+
 class AcessoNegado(Exception):
     """Exceção personalizada para acessos negados"""
     pass
+
 
 class NotFoundError(Exception):
     """Exceção personalizada para recursos não encontrados"""
@@ -279,13 +311,22 @@ def retorna_lista_de_urls_separando_html(html:str, dominio:str, padrao_inicio:st
     return lista_de_links
 
 
-def identifica_anunciante_do_url(url:str) -> str:
-    netloc = urlparse(url).netloc  # "https://www.exemplo.com.br/contatos/index.html" -> "www.exemplo.com.br" 
-    partes = netloc.split('.')  # "www.exemplo.com.br" -> ['www', 'exemplo', 'com', 'br']
+def identifica_anunciante_do_url(url:str) -> tuple[str, str]:
+    """
+    Entra com URL e retorna o DOMINIO e a IMOBILIARIA
+    """
+    # "https://www.exemplo.com.br/contatos/index.html" -> "www.exemplo.com.br" 
+    netloc = urlparse(url).netloc
+    
+    # "www.exemplo.com.br" -> ['www', 'exemplo', 'com', 'br']
+    partes = netloc.split('.')
     
     if partes[0] == "www":
-        partes.pop(0) # ['www', 'exemplo', 'com', 'br'] -> ['exemplo', 'com', 'br']
+        # ['www', 'exemplo', 'com', 'br'] -> ['exemplo', 'com', 'br']
+        partes.pop(0)
 
-    imobiliaria = partes[0] # ['exemplo', 'com', 'br'] -> 'exemplo'
+    # ['exemplo', 'com', 'br'] -> 'exemplo'
+    imobiliaria = partes[0]
     
-    return netloc, imobiliaria # 'www.exemplo.com.br' , 'exemplo'
+    # 'www.exemplo.com.br' , 'exemplo'
+    return netloc, imobiliaria
