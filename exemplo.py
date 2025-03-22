@@ -14,7 +14,7 @@ print(lista_de_urls)
 url_de_imovel = lista_de_urls[0]
 
 # Ao inserir a URL DE UM IMOVEL, a função abrirá o selenium e extrairá as informações e dados do imóvel
-dic_info_imovel = programa_do_erick.extrair_dados_imobiliarios_desta_url(url_de_imovel)
+dic_info_imovel = programa_do_erick.extrair_dados_imobiliarios_desta_url(url_de_imovel, acessar_pagina_repetida=False, avisar_caso_xpath_nao_existir=True)
 print(dic_info_imovel)
 
 # O comando abaixo gravará em formato TXT e CSV as informações extraídas

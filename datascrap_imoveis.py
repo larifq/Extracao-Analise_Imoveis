@@ -92,6 +92,8 @@ class Extrator_de_Dados():
 
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de urls da página de pesquisa")
+        
+        self.now = datetime.now()
         hoje = self.now.strftime("%Y-%m-%d")
         if not hoje in self.urls_extraidas:
             self.urls_extraidas[hoje]=[]
@@ -100,7 +102,7 @@ class Extrator_de_Dados():
         return lista_de_links
 
 
-    def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str, acessar_pagina_repetida=False) -> dict:
+    def extrair_dados_imobiliarios_desta_url(self, url_do_imovel:str, acessar_pagina_repetida:bool=True, avisar_caso_xpath_nao_existir:bool=False) -> dict:
         """
         A partir da URL DO IMOVEL, a função abrirá o selenium e extrairás as informações do imóvel retornando um dicionário.
         """
@@ -110,9 +112,10 @@ class Extrator_de_Dados():
             raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_do_imovel).__name__}: {url_do_imovel}")
 
         dominio, imobiliaria = identifica_anunciante_do_url(url_do_imovel)
-        if acessar_pagina_repetida and url_do_imovel in self.dados_extraidos[imobiliaria]:
-            print(url_do_imovel + "já foi extraído anteriormente")
-            return
+        if (not acessar_pagina_repetida) and (imobiliaria in self.dados_extraidos):
+            if url_do_imovel in self.dados_extraidos[imobiliaria]:
+                print(url_do_imovel + "já foi extraído anteriormente")
+                return
 
         # Cria dicionário inicial
         dict_dados_obtidos = {
@@ -122,6 +125,7 @@ class Extrator_de_Dados():
             }
 
         XPATHS_CLICAR = []
+        self.now = datetime.now()
 
         match imobiliaria:
             case "chavesnamao":
@@ -140,7 +144,7 @@ class Extrator_de_Dados():
                     "INFO_3":       "/html/body/main/article/section[2]/div/ul/li[3]/p",
                     "INFO_4":       "/html/body/main/article/section[2]/div/ul/li[4]/p",
                     "INFO_5":       "/html/body/main/article/section[2]/div/ul/li[5]/p",
-                    "INFO_6":       "/html/body/main/article/section[2]/div/ul/li[6]/p",
+                    #"INFO_6":       "/html/body/main/article/section[2]/div/ul/li[6]/p",
                     "ATUALIZACAO":  "/html/body/main/article/section[2]/div/div[1]/div/p[1]",
                     "DESCRICAO":    "/html/body/main/article/section[2]/div/div[1]/div/p[2]",
                     "ANUNCIANTE":   "/html/body/main/article/section[2]/aside/div[2]/span/span[2]/a/span/h2/b",
@@ -152,30 +156,32 @@ class Extrator_de_Dados():
                     "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[1]/div[2]/svg"
                     ]
                 XPATHS_INFO = {
-                    "TITULO":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[2]/div/h1",
-                    "TEMPO_PUBLICADO":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[2]/div/div/small/span",
-                    "DESCRICAO":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[3]/div/div/div/p[2]",
-                    "ALUGUEL":           "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[1]/div/div/p",
-                    "CONDOMINIO":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[2]/div/div/p",
-                    "IPTU":              "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[3]/div/div/p",
-                    "SEGURO_INCENDIO":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[4]/div/div/p",
-                    "TOTAL":             "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[7]/div/div/h4",
-                    "ENDERECO":          "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[2]/div/div/div/div[1]",
-                    "AREA":              "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[1]/div/div/p",
-                    "QUARTOS":           "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[2]/div/div/p",
-                    "BANHEIROS":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[3]/div/div/p",
-                    "GARAGENS":          "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[4]/div/div/p",
-                    "ANDAR":             "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[5]/div/div/p",
-                    "ACEITA_PET":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[6]/div/div/p",
-                    "MOBILIADO":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[7]/div/div/p",
-                    "ESTACAO_PROX":      "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[8]/div/div/p",
-                    "ITENS_DISP":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[1]",
-                    "ITENS_INDISP":      "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[2]",
-                    "NOME_CONDOMINIO":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[1]/h2/span",
+                    "TITULO":           "/html/body/div[1]/div/div/div[2]/div/div/div/div[2]/div/h1",
+                    "TEMPO_PUBLICADO":  "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[2]/div/div/small/span",
+                    "DESCRICAO":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[3]/div/div/div/p",
+                    "ALUGUEL":          "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[1]/div/div/p",
+                    "CONDOMINIO":       "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[2]/div/div/p",
+                    "IPTU":             "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[3]/div/div/p",
+                    "SEGURO_INCENDIO":  "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[4]/div/div/p",
+                    "TAXA_SERVICO":     "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[5]/div/div/p",
+                    #"INFO6":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[6]/div/div/p",
+                    "TOTAL":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[2]/section/div/ul/li[7]/div/div/h4",
+                    "ENDERECO":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[2]/div/div/div/div[1]",
+                    "AREA":             "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[1]/div/div/p",
+                    "QUARTOS":          "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[2]/div/div/p",
+                    "BANHEIROS":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[3]/div/div/p",
+                    "GARAGENS":         "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[4]/div/div/p",
+                    "ANDAR":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[5]/div/div/p",
+                    "ACEITA_PET":       "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[6]/div/div/p",
+                    "MOBILIADO":        "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[7]/div/div/p",
+                    "ESTACAO_PROX":     "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[1]/div/div/div[8]/div/div/p",
+                    "ITENS_DISP":       "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[1]",
+                    "ITENS_INDISP":     "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/section/div/div[4]/div/div/div/div[2]",
+                    "NOME_CONDOMINIO":  "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[1]/h2/span",
                     # itens de condominio, por ora, ainda nao funcionam
-                    "COND_ITENS_DISP":   "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/div[1]/p[2]",
-                    "COND_ITENS_INDISP": "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/p[2]",
-                    "COMPRA":            "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[4]/div/section/div/p[2]",
+                    "COND_ITENS_DISP":  "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/div[1]/p[2]",
+                    "COND_ITENS_INDISP":"/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[3]/div/div[3]/div[2]/div/div/div/div/div[3]/div[1]/p[2]",
+                    "COMPRA":           "/html/body/div[1]/div/div/div[2]/div/div/div/div[4]/main/section/div/div[1]/div/div[4]/div/section/div/p[2]",
                 }
             case "lopes":
                 XPATHS_CLICAR = [
@@ -207,6 +213,7 @@ class Extrator_de_Dados():
             self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         self.driver.get(url_do_imovel)
 
+        # TO-DO - verificar pq nao esta funcionando
         # Se houver XPATH necessários para clicar para a visualização de dados
         if XPATHS_CLICAR:
             for xpath in XPATHS_CLICAR:
@@ -221,7 +228,8 @@ class Extrator_de_Dados():
                 dict_dados_obtidos[nome] = valor
             except:
                 dict_dados_obtidos[nome] = "N/A"
-                print(f'Aviso: Elemento XPATH não localizado no URL fornecido: {nome}')
+                if avisar_caso_xpath_nao_existir:
+                    print(f'Aviso: Elemento XPATH não localizado no URL fornecido: {nome}')
 
         # Salva os dados obtidos em atributo do objeto
         if not imobiliaria in self.dados_extraidos:
@@ -234,7 +242,6 @@ class Extrator_de_Dados():
 
     def salvar_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/", clear_cache=True):
         os.makedirs(dir, exist_ok=True)
-        self.now = datetime.now()
 
         for data, lista_urls in self.urls_extraidas.items():
             path = os.path.join(dir, f'{data}.txt')
