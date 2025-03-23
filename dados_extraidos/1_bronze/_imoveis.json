@@ -1,8 +1,6 @@
 ﻿{
     "chavesnamao": {
         "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-1-quarto-sp-sao-paulo-santo-amaro-RS2700/id-26460892/": {
-            "url": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-1-quarto-sp-sao-paulo-santo-amaro-RS2700/id-26460892/",
-            "imobiliaria": "chavesnamao",
             "data_extracao": "2025-03-22 21:50:33.439",
             "ALUGUEL": "R$ 2.700",
             "CONDOMINIO": "R$ 225/mês",
@@ -22,8 +20,6 @@
             "AREA_COMUM": "Churrasqueira(s) coletiva(s)\nElevador(es)\nPiscina\nPlayground\nSalão de festas\nAcademia"
         },
         "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-1-quarto-sp-sao-paulo-santo-amaro-18m2-RS1500/id-9061058/": {
-            "url": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-1-quarto-sp-sao-paulo-santo-amaro-18m2-RS1500/id-9061058/",
-            "imobiliaria": "chavesnamao",
             "data_extracao": "2025-03-22 21:55:09.513",
             "ALUGUEL": "R$ 1.500",
             "CONDOMINIO": "R$ 300/mês",
@@ -43,8 +39,6 @@
             "AREA_COMUM": "Portaria"
         },
         "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-sp-sao-paulo-santo-amaro-RS2000/id-26083760/": {
-            "url": "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-sp-sao-paulo-santo-amaro-RS2000/id-26083760/",
-            "imobiliaria": "chavesnamao",
             "data_extracao": "2025-03-22 21:57:19.417",
             "ALUGUEL": "R$ 2.000",
             "CONDOMINIO": "R$ 977/mês",
@@ -66,8 +60,6 @@
     },
     "quintoandar": {
         "https://www.quintoandar.com.br/imovel/893425669/alugar/kitnet-1-quarto-santo-amaro-sao-paulo": {
-            "url": "https://www.quintoandar.com.br/imovel/893425669/alugar/kitnet-1-quarto-santo-amaro-sao-paulo",
-            "imobiliaria": "quintoandar",
             "data_extracao": "2025-03-22 22:04:07.412",
             "TITULO": "Studio para alugar com 17m², 1 quarto e sem vaga",
             "TEMPO_PUBLICADO": "Publicado há 23 dias",
