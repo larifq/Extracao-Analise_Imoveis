@@ -15,17 +15,76 @@ from urllib.parse import unquote, urlparse
 
 class Extrator_de_Dados():
 
-    def __init__(self):
+    def __init__(self, salvar_automaticamente:bool=True, diretorio:str="./dados_extraidos/1_bronze/"):
+        """
+        autosave, por padrão True, salva todas as extrações automaticamente cada vez que realizada, recomendado para extracoes isolado.
+            deixar False caso for utilizar loops de extracao, salvar manualmente usando a funcao ;
+        save_dir, indica o diretório que esses dados serão salvos. 
+        """
+        self.salvar_automaticamente = salvar_automaticamente
+        self.diretorio = diretorio
+
         self.driver = False
-        self.now = datetime.now()
         self.urls_extraidas = {}
+        ''' exemplo da estrutura
+            {
+                "22/03/2025": {
+                    "www.exemplo.com/pesquisa/abc": [
+                        "url_1",
+                        "url_2",
+                        "url_3"
+                    ],
+                    "www.site.com/search?default": [
+                        "http_1",
+                        "http_2",
+                        "http_3"
+                    ]
+                }
+            }
+        '''
+
         self.dados_extraidos = {}
+        ''' exemplo da estrutura
+            {
+                "imobiliaria_1": {
+                    "www.exemplo.com/imovel/10101010": {
+                            "aluguel":"R$ 1.234",
+                            "condominio":"R$ 500"
+                        }
+                    "www.exemplo.com/imovel/10101010":
+                            "aluguel":"R$ 2.842",
+                            "condominio":"R$ 540"
+                        }
+                    }
+                }
+                "imobiliaria_2": {
+                        "www.siteimoveis.com/id/54268": {
+                            "aluguel_condominio":"R$ 2.800",
+                            "IPTU":"R$ 250"
+                        }
+                    }
+                }
+            }
+        '''
+        self.carrega_dados_extraidos()
 
 
-    def carrega_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/"):
-        for file in os.listdir(dir):
-            pass
+    def carrega_dados_extraidos(self):
+        dados=[{},{}]
+        dir = self.diretorio
+        paths = [
+            os.path.join(dir, "_urls.json"),
+            os.path.join(dir, "_imoveis.json")
+        ]
 
+        for i, path in enumerate(paths):
+            try:
+                with open(path, "r", encoding="utf-8-sig") as f:
+                    dados[i]=json.load(f)  # Carrega o JSON para um dicionário
+            except:
+                print(f'Aviso: Não foi possível carregar {path}')
+        self.urls_extraidas, self.dados_extraidos = dados
+        return
 
     def retorna_elemento_da_pagina(self, xpath:str) -> object:
         return self.driver.find_element(By.XPATH, xpath)
@@ -93,12 +152,14 @@ class Extrator_de_Dados():
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de urls da página de pesquisa")
         
-        self.now = datetime.now()
-        hoje = self.now.strftime("%Y-%m-%d")
-        if not hoje in self.urls_extraidas:
-            self.urls_extraidas[hoje]=[]
 
-        self.urls_extraidas[hoje].extend(lista_de_links)
+        hoje = datetime.now().strftime("%Y-%m-%d")
+
+        self.urls_extraidas.setdefault(hoje, {}).setdefault(url_da_pesquisa, []).extend(lista_de_links)
+
+        if self.salvar_automaticamente:
+            self.salvar_em_json('urls')
+
         return lista_de_links
 
 
@@ -119,13 +180,10 @@ class Extrator_de_Dados():
 
         # Cria dicionário inicial
         dict_dados_obtidos = {
-            'url':url_do_imovel,
-            'imobiliaria':imobiliaria,
-            'data_extracao':self.now
+            'data_extracao':datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
             }
 
         XPATHS_CLICAR = []
-        self.now = datetime.now()
 
         match imobiliaria:
             case "chavesnamao":
@@ -213,33 +271,79 @@ class Extrator_de_Dados():
             self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         self.driver.get(url_do_imovel)
 
-        # TO-DO - verificar pq nao esta funcionando
-        # Se houver XPATH necessários para clicar para a visualização de dados
+
+        # Se houver XPATH necessários para clicar para a visualização de dados  #  TO-DO - verificar pq nao esta funcionando
         if XPATHS_CLICAR:
             for xpath in XPATHS_CLICAR:
                 # Clica em cada um dos xpath
                 self.se_houver_elemento_clicar_nele(xpath)
 
         # Para cada XPATH_INFO será extraído suas informações (se houver o elemento)
-        for nome, xpath in XPATHS_INFO.items():
+        for titulo, xpath in XPATHS_INFO.items():
             try:
                 elemento = self.driver.find_element(By.XPATH, xpath)
                 valor = elemento.text.strip()
-                dict_dados_obtidos[nome] = valor
+                dict_dados_obtidos[titulo] = valor
             except:
-                dict_dados_obtidos[nome] = "N/A"
+                dict_dados_obtidos[titulo] = "N/A"
                 if avisar_caso_xpath_nao_existir:
-                    print(f'Aviso: Elemento XPATH não localizado no URL fornecido: {nome}')
+                    print(f'Aviso: Elemento XPATH não localizado no URL fornecido: {titulo}')
 
         # Salva os dados obtidos em atributo do objeto
-        if not imobiliaria in self.dados_extraidos:
-            self.dados_extraidos[imobiliaria]=[]
-        self.dados_extraidos[imobiliaria].append(dict_dados_obtidos)
+        self.dados_extraidos.setdefault(imobiliaria, {}).setdefault(url_do_imovel, {}).update(dict_dados_obtidos)
+
+        if self.salvar_automaticamente:
+            self.salvar_em_json('imoveis')
 
         # retorna os dados obtidos
         return dict_dados_obtidos
     
 
+    def salvar_em_json(self, urls_ou_imoveis: str = 'urls'):
+        """
+        Salva os dados extraídos em um arquivo JSON.
+
+        Parâmetros:
+        - urls_ou_imoveis (str): Define quais dados serão salvos.
+            - "urls" -> Salva somente as URLs extraídas.
+            - "imoveis" -> Salva somente os dados dos imóveis extraídos.
+            - True -> Salva ambos.
+
+        Observação:
+        - O salvamento ocorre automaticamente se 'salvar_automaticamente' for True (padrão).
+        """
+
+        # Valida se o argumento da URL é uma string
+        if not isinstance(urls_ou_imoveis, str):
+            raise TypeError(f"Esperado uma URL de argumento string, mas foi recebido {type(url_da_pesquisa).__name__}: {url_da_pesquisa}")
+
+        dir = self.diretorio
+        os.makedirs(dir, exist_ok=True)
+        path_urls = os.path.join(dir, "_urls.json")
+        path_imoveis = os.path.join(dir, "_imoveis.json")
+
+        match urls_ou_imoveis.lower():
+
+            case True:
+                with open(path_urls, "w", encoding="utf-8-sig") as f:
+                    json.dump(self.urls_extraidas, f, ensure_ascii=False, indent=4)
+                with open(path_imoveis, "w", encoding="utf-8-sig") as f:
+                    json.dump(self.dados_extraidos, f, ensure_ascii=False, indent=4)
+
+            case 'urls':
+                with open(path_urls, "w", encoding="utf-8-sig") as f:
+                    json.dump(self.urls_extraidas, f, ensure_ascii=False, indent=4)
+
+            case 'imoveis':
+                with open(path_imoveis, "w", encoding="utf-8-sig") as f:
+                    json.dump(self.dados_extraidos, f, ensure_ascii=False, indent=4)
+
+            case _:
+                raise NotFoundError(f'"urls_ou_imoveis" aceita {True}, "urls" ou "imoveis", foi digitado "{urls_ou_imoveis}"') 
+            
+        return True
+    
+    """
     def salvar_dados_extraidos(self, dir:str="./dados_extraidos/1_bronze/", clear_cache=True):
         os.makedirs(dir, exist_ok=True)
 
@@ -266,10 +370,11 @@ class Extrator_de_Dados():
             self.urls_extraidas = {}
             self.dados_extraidos = {}
         return
-
+    """
 
     def exit(self):
-        self.driver.quit()  # Fechar o navegador
+        if self.driver:
+            self.driver.quit()  # Fechar o navegador
         self.driver = False
 
 
