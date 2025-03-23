@@ -99,7 +99,7 @@ class Extrator_de_Dados():
             return False
 
 
-    def extrair_urls_desta_pesquisa(self, url_da_pesquisa:str) -> list:
+    def extrair_urls_desta_pesquisa(self, url_da_pesquisa:str, acessar_pagina_repetida:bool=True) -> list:
         """
         Entra com um link da pesquisa, exemplo, URL da pesquisa realizado em São Paulo com 2 dorm com preço máximo de R$ 2.000
         Retorna uma lista de URL dos imóveis encontrados.
@@ -113,6 +113,13 @@ class Extrator_de_Dados():
         html_da_pagina = testa_e_retorna_responseText(url_da_pesquisa)
         dominio, imobiliaria = identifica_anunciante_do_url(url_da_pesquisa)
         lista_de_links = []
+
+        if not acessar_pagina_repetida:
+            for dict_data in self.urls_extraidas.values():
+                if url_da_pesquisa in dict_data:
+                    print(bcolors.WARNING + "já foi extraído anteriormente" + bcolors.ENDC)
+                    lista_de_links = dict_data.get(url_da_pesquisa)
+                    return lista_de_links
 
         match imobiliaria:
             case "chavesnamao":
@@ -137,7 +144,7 @@ class Extrator_de_Dados():
             case "quintoandar":
                 PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
                 PADRAO_FIM = '\?'
-                return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
+                lista_de_links = retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
             #case "olx":
                 #PADRAO_INICIO = 'data-testid="house-card-container-rent"><a href="'
@@ -147,14 +154,13 @@ class Extrator_de_Dados():
             case "lopes":
                 PADRAO_INICIO = 'class="lead-button" href="'
                 PADRAO_FIM = '"'
-                return retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
+                lista_de_links = retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de urls da página de pesquisa")
         
 
         hoje = datetime.now().strftime("%Y-%m-%d")
-
         self.urls_extraidas.setdefault(hoje, {}).setdefault(url_da_pesquisa, []).extend(lista_de_links)
 
         if self.salvar_automaticamente:
@@ -175,7 +181,7 @@ class Extrator_de_Dados():
         dominio, imobiliaria = identifica_anunciante_do_url(url_do_imovel)
         if (not acessar_pagina_repetida) and (imobiliaria in self.dados_extraidos):
             if url_do_imovel in self.dados_extraidos[imobiliaria]:
-                print(url_do_imovel + "já foi extraído anteriormente")
+                print(bcolors.WARNING + url_do_imovel + "já foi extraído anteriormente" + bcolors.ENDC)
                 return
 
         # Cria dicionário inicial
@@ -321,7 +327,6 @@ class Extrator_de_Dados():
         os.makedirs(dir, exist_ok=True)
         path_urls = os.path.join(dir, "_urls.json")
         path_imoveis = os.path.join(dir, "_imoveis.json")
-
         match urls_ou_imoveis.lower():
 
             case True:
@@ -393,6 +398,17 @@ class NotFoundError(Exception):
     """Exceção personalizada para recursos não encontrados"""
     pass
 
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 
 def testa_e_retorna_responseText(url:str):
