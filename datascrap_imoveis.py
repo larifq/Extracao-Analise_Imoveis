@@ -156,6 +156,12 @@ class Extrator_de_Dados():
                 PADRAO_FIM = '"'
                 lista_de_links = retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
 
+            case "rentola":
+                PADRAO_INICIO = r':false,\"slug\":\"'
+                PADRAO_FIM = r'\"'
+                lista_de_links = retorna_lista_de_urls_separando_html(html_da_pagina, dominio, PADRAO_INICIO, PADRAO_FIM)
+
+
             case _:
                 raise ImobiliariaNaoCadastrada(f"O programa ainda não tem a imobiliaria {imobiliaria} mapeada para extração de urls da página de pesquisa")
         
