@@ -1,4 +1,4 @@
-﻿{
+{
     "2025-03-22": {
         "https://www.chavesnamao.com.br/apartamentos-para-alugar/sp-sao-paulo/brooklin/1-quarto/?filtro=bai:[53754],pmax:3000,cnd:true": [
             "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-sp-sao-paulo-santo-amaro-RS2000/id-26083760/",
@@ -47,6 +47,40 @@
             "https://www.quintoandar.com.br/imovel/893070938/alugar/kitnet-1-quarto-chacara-santo-antonio-zona-sul-sao-paulo",
             "https://www.quintoandar.com.br/imovel/892962328/alugar/casa-1-quarto-vila-tramontano-sao-paulo",
             "https://www.quintoandar.com.br/imovel/893552607/alugar/kitnet-1-quarto-campo-belo-sao-paulo"
+        ],
+        "https://www.chavesnamao.com.br/apartamentos-para-alugar/sp-sao-paulo/?filtro=tim:[4+10+13+16+20+25],pmax:3000": [
+            "https://www.chavesnamao.com.br/imovel/flat-para-alugar-1-quarto-com-garagem-sp-sao-paulo-moema-38m2-RS2500/id-19983970/",
+            "https://www.chavesnamao.com.br/imovel/loft-para-alugar-1-quarto-sp-sao-paulo-parque-da-mooca-30m2-RS1800/id-27175795/",
+            "https://www.chavesnamao.com.br/imovel/kitnet-para-alugar-sp-sao-paulo-jardim-sao-paulo-zona-norte-35m2-RS2850/id-29191570/",
+            "https://www.chavesnamao.com.br/imovel/casa-para-alugar-1-quarto-com-garagem-sp-sao-paulo-vila-das-belezas-125m2-RS1650/id-28759108/",
+            "https://www.chavesnamao.com.br/imovel/casa-em-condominio-para-alugar-2-quartos-com-garagem-sp-sao-paulo-vila-formosa-50m2-RS1350/id-16017855/",
+            "https://www.chavesnamao.com.br/imovel/kitnet-para-alugar-sp-sao-paulo-ipiranga-RS1500/id-27049495/",
+            "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-sp-sao-paulo-vila-do-castelo-RS2000/id-25225524/",
+            "https://www.chavesnamao.com.br/imovel/flat-para-alugar-1-quarto-com-garagem-sp-sao-paulo-bela-vista-RS1850/id-24738569/",
+            "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-1-quarto-com-garagem-sp-sao-paulo-cambuci-35m2-RS1900/id-28760445/",
+            "https://www.chavesnamao.com.br/imovel/kitnet-para-alugar-sp-sao-paulo-bela-vista-RS2500/id-27366204/",
+            "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-1-quarto-sp-sao-paulo-belenzinho-52m2-RS1500/id-22378711/",
+            "https://www.chavesnamao.com.br/imovel/loft-para-alugar-1-quarto-sp-sao-paulo-vila-guedes-20m2-RS1400/id-21830856/",
+            "https://www.chavesnamao.com.br/imovel/casa-para-alugar-1-quarto-sp-sao-paulo-vila-industrial-50m2-RS800/id-18008467/",
+            "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-1-quarto-com-garagem-sp-sao-paulo-vila-olimpia-27m2-RS3000/id-25136612/",
+            "https://www.chavesnamao.com.br/imovel/kitnet-para-alugar-sp-sao-paulo-vila-carrao-RS1200/id-19197637/",
+            "https://www.chavesnamao.com.br/imovel/loft-para-alugar-1-quarto-sp-sao-paulo-bela-vista-RS2690/id-11934211/",
+            "https://www.chavesnamao.com.br/imovel/flat-para-alugar-1-quarto-sp-sao-paulo-vila-buarque-26m2-RS2300/id-26835520/",
+            "https://www.chavesnamao.com.br/imovel/kitnet-para-alugar-sp-sao-paulo-perdizes-28m2-RS3000/id-25904931/",
+            "https://www.chavesnamao.com.br/imovel/flat-para-alugar-1-quarto-com-garagem-sp-sao-paulo-jardim-paulista-65m2-RS2100/id-28896041/",
+            "https://www.chavesnamao.com.br/imovel/casa-para-alugar-2-quartos-sp-sao-paulo-mooca-215m2-RS2600/id-28701356/",
+            "https://www.chavesnamao.com.br/imovel/loft-para-alugar-1-quarto-sp-sao-paulo-vila-sao-jose-ipiranga-30m2-RS1900/id-5650614/",
+            "https://www.chavesnamao.com.br/imovel/casa-para-alugar-3-quartos-com-garagem-sp-sao-paulo-tatuape-70m2-RS2190/id-27000874/",
+            "https://www.chavesnamao.com.br/imovel/loft-para-alugar-1-quarto-sp-sao-paulo-pinheiros-100m2-RS3000/id-20977802/",
+            "https://www.chavesnamao.com.br/imovel/flat-para-alugar-1-quarto-sp-sao-paulo-penha-de-franca-138m2-RS3000/id-22197139/",
+            "https://www.chavesnamao.com.br/imovel/casa-para-alugar-1-quarto-sp-sao-paulo-vila-verde-40m2-RS750/id-27507629/",
+            "https://www.chavesnamao.com.br/imovel/apartamento-para-alugar-2-quartos-com-garagem-sp-sao-paulo-vila-carrao-51m2-RS2900/id-28483223/",
+            "https://www.chavesnamao.com.br/imovel/flat-para-alugar-1-quarto-com-garagem-sp-sao-paulo-jardim-paulista-44m2-RS2945/id-29087641/",
+            "https://www.chavesnamao.com.br/imovel/casa-em-condominio-para-alugar-2-quartos-com-garagem-sp-sao-paulo-itaquera-110m2-RS2400/id-27635851/",
+            "https://www.chavesnamao.com.br/imovel/kitnet-para-alugar-sp-sao-paulo-pinheiros-24m2-RS3000/id-29077167/",
+            "https://www.chavesnamao.com.br/imovel/loft-para-alugar-1-quarto-com-garagem-sp-sao-paulo-bela-vista-40m2-RS2500/id-12973795/",
+            "https://www.chavesnamao.com.br/imovel/kitnet-para-alugar-sp-sao-paulo-bela-vista-RS2700/id-21925530/",
+            "https://www.chavesnamao.com.br/imovel/casa-para-alugar-3-quartos-com-garagem-sp-sao-paulo-vila-gumercindo-110m2-RS2600/id-20675895/"
         ]
     }
 }
